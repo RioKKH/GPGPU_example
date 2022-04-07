@@ -38,10 +38,10 @@ int main()
     }
     stop_c = clock(); // プログラム実行時からの経過時間を取得
 
-    for (i=0; i<N; ++i)
-    {
-        printf("%f+%f=%f\n", a[i], b[i], c[i]);
-    }
+    // for (i=0; i<N; ++i)
+    // {
+    //     printf("%f+%f=%f\n", a[i], b[i], c[i]);
+    // }
 
     time_s = (stop_c - start_c)/(float)CLOCKS_PER_SEC;
     printf("%f\n", time_s);
