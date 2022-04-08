@@ -12,7 +12,10 @@ INTELOPENMP = -openmp
 
 TARGET = 08_vectoradd 08_vectoradd_malloc 08_vector_add_thread\
 	 10_hellokernel 10_hellothread 10_hellothread_2 10_hellothreads\
-	 11_vectoradd_cpu 11_vectoradd_malloc_cpu 11_vectoradd_1thread
+	 11_vectoradd_cpu 11_vectoradd_malloc_cpu 11_vectoradd_1thread\
+	 12_imageproc1d_cpu 12_imageproc1d_gpu\
+	 12_vectoradd2d_cpu 12_vectoradd2d_1darray_cpu\
+	 12_hellothreads2d_ng 12_hellothreads2d_ok
 	 
 
 all : $(TARGET)
@@ -45,6 +48,24 @@ all : $(TARGET)
 	$(CC) $(GCC_OPTIONS) $^ -o $@
 
 11_vectoradd_1thread : 11_vectoradd_1thread.cu
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+12_imageproc1d_cpu : 12_imageproc1d.c
+	$(CC) $(GCC_OPTIONS) $^ -o $@
+
+12_imageproc1d_gpu : 12_imageproc1d.cu
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+12_vectoradd2d_cpu : 12_vectoradd2d.c
+	$(CC) $(GCC_OPTIONS) $^ -o $@
+
+12_vectoradd2d_1darray_cpu : 12_vectoradd2d_1darray.c
+	$(CC) $(GCC_OPTIONS) $^ -o $@
+
+12_hellothreads2d_ng : 12_hellothreads2d_ng.cu
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+12_hellothreads2d_ok : 12_hellothreads2d_ok.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 clean:
