@@ -15,7 +15,8 @@ TARGET = 08_vectoradd 08_vectoradd_malloc 08_vector_add_thread\
 	 11_vectoradd_cpu 11_vectoradd_malloc_cpu 11_vectoradd_1thread\
 	 12_imageproc1d_cpu 12_imageproc1d_gpu\
 	 12_vectoradd2d_cpu 12_vectoradd2d_1darray_cpu\
-	 12_hellothreads2d_ng 12_hellothreads2d_ok
+	 12_hellothreads2d_ng 12_hellothreads2d_ok\
+	 12_vectoradd2d_gpu
 	 
 
 all : $(TARGET)
@@ -66,6 +67,9 @@ all : $(TARGET)
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 12_hellothreads2d_ok : 12_hellothreads2d_ok.cu
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+12_vectoradd2d_gpu : 12_vectoradd2d.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 clean:
