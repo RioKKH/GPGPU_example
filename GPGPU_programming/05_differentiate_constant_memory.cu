@@ -9,6 +9,8 @@
 #define NT (256)
 #define NB (Nx / NT)
 
+__constant__ double idx2;
+
 void init(double *u)
 {
 	int i;
@@ -62,7 +64,7 @@ __global__ void differentiate(double *u, double *dudx)
 	// 共有メモリに値の読み込み完了
 
 	// 全スレッドが中心差分を計算
-	dudx[i] = (su[tx + 1] - su[tx - 1]) / (2.0 * dx); 
+	dudx[i] = (su[tx + 1] - su[tx - 1]) * idx2;
 }
 
 int main(void)
@@ -77,6 +79,10 @@ int main(void)
 	cudaEventCreate(&start);
 	cudaEventCreate(&end);
 
+	// コンスタントメモリにデータを送るために
+	// ホストで 1 / (2.0 * dx)を計算する
+	double h_idx2 = 1.0 / (2.0 * dx);
+
 	host_u		= (double *)malloc(Nbytes);
 	host_dudx	= (double *)malloc(Nbytes);
 	cudaMalloc((void **)&u, Nbytes);
@@ -84,6 +90,9 @@ int main(void)
 
 	init(host_u);
 	cudaMemcpy(u, host_u, Nbytes, cudaMemcpyHostToDevice);
+	
+	// コンスタントメモリへデータを送る
+	cudaMemcpyToSymbol(idx2, &h_idx2, sizeof(double));
 
 	cudaEventRecord(start, 0);
 	differentiate<<<NB, NT>>>(u, dudx);

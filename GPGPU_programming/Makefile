@@ -18,7 +18,8 @@ TARGET = 05_differentiate 05_differentiate_shared_memory\
 	 07_reduction1 07_reduction1.1 07_reduction1.2\
 	 07_reduction2\
 	 07_reduction3 07_reduction3.1 07_reduction3.2\
-	 08_reduction4
+	 08_reduction4 08_reduction4_2 08_reduction5 08_reduction6\
+	 08_reduction7 08_reduction8 08_reduction9\
 	
 all : $(TARGET)
 
@@ -67,6 +68,23 @@ all : $(TARGET)
 08_reduction4 : 08_reduction4.cu 
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
+08_reduction4_2 : 08_reduction4_2.cu 
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+08_reduction5 : 08_reduction5.cu 
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+08_reduction6 : 08_reduction6.cu 
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+08_reduction7 : 08_reduction7.cu 
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+08_reduction8 : 08_reduction8.cu 
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+08_reduction9 : 08_reduction9.cu 
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 clean:
 	/bin/rm -f *.o *.~ $(TARGET)
