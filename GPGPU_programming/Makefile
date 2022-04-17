@@ -21,7 +21,7 @@ TARGET = 05_differentiate 05_differentiate_shared_memory\
 	 08_reduction4 08_reduction4_2 08_reduction5 08_reduction6\
 	 08_reduction7 08_reduction8 08_reduction9 08_reduction9switch\
 	 09_matmul_cpu 09_matmul2 09_matmul_gpu\
-	 mm1.cu mm2.cu
+	 #mm1 mm2 mm3 mm4
 	
 all : $(TARGET)
 
