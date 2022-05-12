@@ -10,7 +10,7 @@ TARGET = thrust_example1 iterator thrust_vector_and_array\
 	 thrust_vector_and_array_pointer\
 	 thrust_vector_and_array_pointer2\
 	 thrust_sort thrust_sort_by_key\
-	 thrust_stable_sort
+	 thrust_stable_sort thrust_generate
 
 all : $(TARGET)
 
@@ -18,6 +18,9 @@ thrust_example1.o : thrust_example1.cu
 	$(NVCC) $(NVCC_OPTIONS) -c $< -o $@
 
 thrust_example1 : thrust_example1.o
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+thrust_generate : thrust_generate.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 iterator : iterator.cu

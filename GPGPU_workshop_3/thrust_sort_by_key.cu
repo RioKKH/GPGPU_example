@@ -38,7 +38,7 @@ int main(void)
 
     for (int i=0; i<N; ++i)
     {
-        std::cout << h_keys[i] << ":" << d_values[i] << std::endl;
+        std::cout << d_keys[i] << ":" << d_values[i] << std::endl;
     }
 
     return 0;
