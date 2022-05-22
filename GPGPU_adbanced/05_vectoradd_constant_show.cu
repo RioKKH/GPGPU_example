@@ -57,11 +57,13 @@ int main(void)
     puts("Show");
     show<<<NB, NT>>>();
 
+    /*
     cudaMemcpy(host_c, c, Nbytes, cudaMemcpyDeviceToHost);  
     for (int i = 0; i < N; i++)
     {
         printf("%d %f\n", i, host_c[i]);
     }
+    */
 
     return 0;
 }
