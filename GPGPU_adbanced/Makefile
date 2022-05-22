@@ -10,7 +10,7 @@ GNUOPENMP = -fopenmp
 INTELOPEMP = -openmp
 
 APPS = 05_vectoradd 05_vectoradd_constant 05_vectoradd_broadcast\
-			 05_vectoradd_constant_show
+			 05_vectoradd_constant_show 05_vectoradd_constant_struct
 
 TARGET = ${APPS}
 
@@ -28,5 +28,9 @@ build: ${APPS}
 
 05_vectoradd_constant_show : 05_vectoradd_constant_show.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+05_vectoradd_constant_struct : 05_vectoradd_constant_struct.cu
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
 
 
