@@ -3,8 +3,8 @@ CPP = g++
 NVCC = nvcc
 GCC_OPTIONS = -Wall --pedantic-error
 GPP_OPTIONS = -std=c++17 -Wall --pedantic-error -D_DEBUG
-NVCC_OPTIONS = -arch=sm_52 -D_DEBUG
-#NVCC_OPTIONS = -arch=sm_86 -D_DEBUG
+#NVCC_OPTIONS = -arch=sm_52 -D_DEBUG
+NVCC_OPTIONS = -arch=sm_86 -D_DEBUG
 
 GNUOPENMP = -fopenmp
 INTELOPEMP = -openmp
@@ -32,5 +32,7 @@ build: ${APPS}
 05_vectoradd_constant_struct : 05_vectoradd_constant_struct.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
-
+clean:
+	rm -f ${APPS}
+	rm -f *.o
 
