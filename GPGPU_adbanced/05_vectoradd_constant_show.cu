@@ -22,10 +22,10 @@ __global__ void add(float *c)
     printf("%f\n", c[i]);
 }
 
-__global__ void show(void)
+__global__ void show(float *c)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
-    printf("%d %f %f\n", i, a[i], b[i]); 
+    printf("%d %f %f %f\n", i, a[i], b[i], c[i]); 
 }
 
 
@@ -47,21 +47,26 @@ int main(void)
         host_b[i] = 2.0f;
     }
 
-    cudaMemcpyToSymbol(a, host_b, Nbytes);
+    cudaMemcpyToSymbol(a, host_a, Nbytes);
     cudaMemcpyToSymbol(b, host_b, Nbytes);
 
     puts("Init");
     init<<<NB, NT>>>(c);
+    cudaDeviceSynchronize();
     puts("Add");
     add<<<NB, NT>>>(c);
+    cudaDeviceSynchronize();
     puts("Show");
-    show<<<NB, NT>>>();
+    show<<<NB, NT>>>(c);
+    cudaDeviceSynchronize();
 
+    /*
     cudaMemcpy(host_c, c, Nbytes, cudaMemcpyDeviceToHost);  
     for (int i = 0; i < N; i++)
     {
         printf("%d %f\n", i, host_c[i]);
     }
+    */
 
     return 0;
 }
