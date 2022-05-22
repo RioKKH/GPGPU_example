@@ -9,7 +9,8 @@ NVCC_OPTIONS = -arch=sm_52 -D_DEBUG
 GNUOPENMP = -fopenmp
 INTELOPEMP = -openmp
 
-APPS = 05_vectoradd 05_vectoradd_constant 05_vectoradd_broadcast
+APPS = 05_vectoradd 05_vectoradd_constant 05_vectoradd_broadcast\
+			 05_vectoradd_constant_show
 
 TARGET = ${APPS}
 
@@ -23,6 +24,9 @@ build: ${APPS}
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 05_vectoradd_broadcast : 05_vectoradd_broadcast.cu
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+05_vectoradd_constant_show : 05_vectoradd_constant_show.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 
