@@ -18,8 +18,8 @@ __constant__ EvoPrms gpuevoprms;
 
 __global__ void show()
 {
-    printf("%d\n", gpuevoprms.pop);
-    printf("%d\n", gpuevoprms.chromosome);
+    printf("device %d\n", gpuevoprms.pop);
+    printf("device %d\n", gpuevoprms.chromosome);
 }
 
 void set(EvoPrms* prms)
