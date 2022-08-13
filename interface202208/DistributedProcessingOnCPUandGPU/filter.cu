@@ -116,6 +116,7 @@ __global__ void gaussian_filter_gpu(const uint8_t* src, uint8_t* dst, int rows, 
     dst[y * cols + x] = uint8_t(sum);
 }
 
+
 void sobel_filter_cpu(const uint8_t* src, uint8_t* dst, int rows, int cols)
 {
     const int kernel[3][3] = { {-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1} };
@@ -139,6 +140,7 @@ void sobel_filter_cpu(const uint8_t* src, uint8_t* dst, int rows, int cols)
         }
     }
 }
+
 
 __global__ void sobel_filter_gpu(const uint8_t* src, uint8_t* dst, int rows, int cols)
 {
@@ -165,9 +167,27 @@ __global__ void sobel_filter_gpu(const uint8_t* src, uint8_t* dst, int rows, int
 }
 
 
+template <int ksize>
+void check(uint8_t* a, uint8_t* b, int rows, int cols)
+{
+    const int size = ksize / 2;
+    int count = 0;
 
+    for (int y = size; y < rows - size; ++y)
+    {
+        for (int x = size; x < cols - size; ++x)
+        {
+            if (std::abs(a[y * cols + x] - b[y * cols + x]) > 1)
+            {
+                printf("%d %d %u %u\n", y, x, a[y * cols + x], b[y * cols + x]);
+                count++;
+            }
+        }
+    }
 
-
+    const int pixels = (rows - 2 * size) * (cols - 2 * size);
+    printf("err rate : %.2f %% : %d / %d\n", float(count) / pixels * 100, count, pixels);
+}
 
 
 #endif // FILTER_H
