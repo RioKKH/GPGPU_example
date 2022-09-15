@@ -4,7 +4,7 @@ NVCC = nvcc
 GCC_OPTIONS = -Wall --pedantic-error
 GCC_OPTIONS = -Wall --pedantic-error
 GPP_OPTIONS = -std=c++17 -Wall --pedantic-error
-NVCC_OPTIONS = -arch=sm_86
+NVCC_OPTIONS = -arch=sm_52
 #NVCC_OPTIONS = -lcublas 
 
 GNUOPENMP = -fopenmp

@@ -12,7 +12,7 @@ INTELOPENMP = -openmp
 
 TARGET = cuda_add cuda_reduction_cpu\
 	 cuda_reduction_gpu_ng cuda_reduction_gpu_ok\
-	 cuda_index cuda_hellothreads cuda_init
+	 cuda_index cuda_hellothreads cuda_init cuda_memcpy
 
 	
 
@@ -37,6 +37,9 @@ cuda_reduction_gpu_ok : cuda_reduction_gpu_ok.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 cuda_hellothreads : cuda_hellothreads.cu
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+cuda_memcpy : cuda_memcpy.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 clean:
