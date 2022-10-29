@@ -133,10 +133,10 @@ int main(void)
 		BGR *BGRfiltered;
 		cudaMalloc((void **)&BGRfiltered, sizeof(BGR) * bmp.width * bmp.height);
 
-		negativeBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
+		// negativeBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
 		// yreflectBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
 		// grayBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
-		// boxfilterBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
+		boxfilterBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
 
 		// フィルタ処理後の画像と原画像のポインタを交換し、処理後の画像をBGR型に変換
 		BGR *swap = BGRfiltered;

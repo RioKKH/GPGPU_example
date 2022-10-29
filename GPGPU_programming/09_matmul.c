@@ -67,6 +67,7 @@ void matmul(float *A, float *B, float *C)
 		{
 			for (k = 0; k < SIZE; k++)
 			{
+                printf("%d,%d,%d\n", i, j, k);
 				C[i * SIZE + j] += A[i * SIZE + k] * B[k * SIZE + j];
 			}
 		}

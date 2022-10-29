@@ -32,7 +32,10 @@ all : $(TARGET)
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@ -lm
 
 05_differentiate_constant_memory : 05_differentiate_constant_memory.cu
-	$(NVCC) $(NVCC_OPTIONS) $^ -o $@ -lm 06_vectoradd : 06_vectoradd.cu 
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@ -lm
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
+
+06_vectoradd : 06_vectoradd.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@
 
 06_vectoradd_simple_constant_memory : 06_vectoradd_simple_constant_memory.cu 

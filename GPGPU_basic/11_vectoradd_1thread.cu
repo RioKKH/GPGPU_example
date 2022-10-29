@@ -54,4 +54,3 @@ int main(void)
     cudaFree(c);
     return 0;
 }
-

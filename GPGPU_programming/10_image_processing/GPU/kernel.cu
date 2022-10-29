@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cuda_runtime.h>
 #include "bmpheader.h"
 
 __constant__ float cfilter[3][3];
@@ -40,7 +41,7 @@ __global__ void negativeUchar4(uchar4 *pixel, int width, int height, uchar4 *fil
 	// filtered[ij].w = 255 - pixel[ij].w; // .wの処理は不要
 }
 
-// ネガティブ処理 (BFR版)
+// ネガティブ処理 (BGR版)
 __global__ void negativeBGR(BGR *pixel, int width, int height, BGR *filtered)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -65,7 +66,7 @@ __global__ void yreflectUchar4(uchar4 *pixel, int width, int height, uchar4 *fil
 	filtered[ijreflected].w = pixel[ij].w; // 単純な代入の場合、.w は無駄でも処理を記述しておく
 }
 
-// 画像の反転 (BFR版)
+// 画像の反転 (BGR版)
 __global__ void yreflectBGR(BGR *pixel, int width, int height, BGR *filtered)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
