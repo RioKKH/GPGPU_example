@@ -1,3 +1,4 @@
+// #include <__clang_cuda_builtin_vars.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -217,3 +218,76 @@ __global__ void boxfilterBGR(BGR *pixel, int width, int height, BGR *filtered)
 			  + cfilter[1][2] * pixel[i__jp1].R);
 	}
 }
+
+//- ガウシアンフィルター BGR版
+__global__ void gaussianKernelGPUSimple(BGR *pixel, int width, int height, int step, BGR *filtered)
+{
+    const float filter3x3[3][3] = {
+        { 0.0625, 0.1250, 0.0625 },
+        { 0.1250, 0.2500, 0.1250 },
+        { 0.0625, 0.1250, 0.0625 }
+    };
+
+    const float filter5x5[5][5] = {
+        { 0.003906f, 0.015625f, 0.023438f, 0.015625f, 0.003906f },
+        { 0.015625f, 0.062500f, 0.093750f, 0.062500f, 0.015625f },
+        { 0.023438f, 0.093750f, 0.140625f, 0.093750f, 0.023438f },
+        { 0.015625f, 0.062500f, 0.093750f, 0.062500f, 0.015625f },
+        { 0.003906f, 0.015625f, 0.023438f, 0.015625f, 0.003906f },
+    };
+
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (i < width && j < height)
+    {
+        BGR sum; 
+        for (int dj = 0; dj < 5; ++dj) // ij loop for kernel
+        {
+            for (int di = 0; di < 5; ++di)
+            {
+                sum.B += filter5x5[dj][di] * pixel[(i + di) + (j + dj) * step].B;
+                sum.G += filter5x5[dj][di] * pixel[(i + di) + (j + dj) * step].G;
+                sum.R += filter5x5[dj][di] * pixel[(i + di) + (j + dj) * step].R;
+            }
+        }
+        filtered[i + j * step].B = (unsigned char)(sum.B + 0.5f);
+        filtered[i + j * step].G = (unsigned char)(sum.G + 0.5f);
+        filtered[i + j * step].R = (unsigned char)(sum.R + 0.5f);
+    }
+}
+
+
+//- Gaussian filter BGR Constantメモリー版
+__constant__ float filter5x5[5][5] = {
+        { 0.003906f, 0.015625f, 0.023438f, 0.015625f, 0.003906f },
+        { 0.015625f, 0.062500f, 0.093750f, 0.062500f, 0.015625f },
+        { 0.023438f, 0.093750f, 0.140625f, 0.093750f, 0.023438f },
+        { 0.015625f, 0.062500f, 0.093750f, 0.062500f, 0.015625f },
+        { 0.003906f, 0.015625f, 0.023438f, 0.015625f, 0.003906f },
+};
+
+__global__ void gaussianKernelGPUConstant(BGR *pixel, int width, int height, int step, int ks, BGR *filtered)
+{
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (i < width && j < height)
+    {
+        BGR sum = {0, 0, 0};
+        for (int dj = 0; dj < ks; ++dj)
+        {
+            for (int di = 0; di < ks; ++di)
+            {
+                sum.B += filter5x5[dj][di] * pixel[(i + di) + (j + dj) * step].B;
+                sum.G += filter5x5[dj][di] * pixel[(i + di) + (j + dj) * step].G;
+                sum.R += filter5x5[dj][di] * pixel[(i + di) + (j + dj) * step].R;
+            }
+        }
+        filtered[i + j * step].B = (unsigned char)(sum.B + 0.5f);
+        filtered[i + j * step].G = (unsigned char)(sum.G + 0.5f);
+        filtered[i + j * step].R = (unsigned char)(sum.R + 0.5f);
+    }
+}
+
+

@@ -65,20 +65,8 @@ int writeBmp(const char *outputfilename, Img *bmp, BmpFileHeader *fileHdr, BmpIn
 
 int main(void)
 {
-	float blurfilter[3][3] = {
-		{1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f},
-		{1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f},
-		{1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f},
-	};
-
-	float gaussianfilter[3][3] = {
-		{1.0f/16.0f, 2.0f/16.0f, 1.0f/16.0f},
-		{2.0f/16.0f, 4.0f/16.0f, 2.0f/16.0f},
-		{1.0f/16.0f, 2.0f/16.0f, 1.0f/16.0f},
-	};
-
 	// フィルタ用の係数テーブルをコンスタントメモリへコピー
-	cudaMemcpyToSymbol(cfilter, gaussianfilter, 3*3*sizeof(float));
+	// cudaMemcpyToSymbol(cfilter, gaussianfilter, 3*3*sizeof(float));
 
 	const char *filename = "Parrots.bmp";
 	const char *outputfilename = "output.bmp";
@@ -131,12 +119,17 @@ int main(void)
 		dim3 block  = dim3(bmp.width/thread.x, bmp.height/thread.y, 1);
 
 		BGR *BGRfiltered;
-		cudaMalloc((void **)&BGRfiltered, sizeof(BGR) * bmp.width * bmp.height);
+		// cudaMalloc((void **)&BGRfiltered, sizeof(BGR) * bmp.width * bmp.height);
+        cudaMallocHost((void**)&BGRfiltered, sizeof(BGR) * bmp.width * bmp.height);
+        // cudaHostAlloc((void**)&BGRfiltered, sizeof(BGR) * bmp.width * bmp.height, 0);
+        // memcpy(BGRfiltered, 
 
 		// negativeBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
 		// yreflectBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
 		// grayBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
-		boxfilterBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
+		// boxfilterBGR<<<block, thread>>>(dev_bmp, bmp.width, bmp.height, BGRfiltered);
+        // gaussianKernelGPUSimple<<<block, thread>>>(dev_bmp, bmp.width -4, bmp.height -4, bmp.width, BGRfiltered);
+        gaussianKernelGPUConstant<<<block, thread>>>(dev_bmp, bmp.width -4, bmp.height -4, bmp.width, 5, BGRfiltered);
 
 		// フィルタ処理後の画像と原画像のポインタを交換し、処理後の画像をBGR型に変換
 		BGR *swap = BGRfiltered;
@@ -148,6 +141,17 @@ int main(void)
 		cudaFree(dev_bmp);
 		cudaFree(BGRfiltered);
 	}
+    /*
+    else
+    {
+        printf("Pinned: \n");
+        dim3 thread = dim3(THREADX, THREADY, 1);
+        dim3 block  = dim3(bmp.width/thread.x, bmp.height/thread.y, 1);
+
+        BGR *BGRfiltered;
+        cudaHostAlloc((void**)&BGRfiltered, sizeof(BGR) * bmp.width * bmp.height);
+    }
+    */
 
 	// ビットマップファイルの書き出し
 	writeBmp(outputfilename, &bmp, &fileHdr, &infoHdr);
