@@ -15,13 +15,21 @@ NVCC_OPTIONS = --generate-code arch=compute_75,code=sm_75 \
 GNUOPENMP = -fopenmp
 INTELOPENMP = -openmp
 
-TARGET =  imageprocessing
+TARGET =  imageprocessing\
+					imageprocessing_pinned\
+					imageprocessing_mapped
 	
 all : $(TARGET)
 
 imageprocessing : main.cu
 	$(NVCC) $(NVCC_OPTIONS) $^ -o $@ -lm
 	#$(NVCC) $(NVCC_OPTIONS_CHAR4) $^ -o $@ -lm
+
+imageprocessing_pinned : main_pinned.cu
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@ -lm
+
+imageprocessing_mapped : main_mapped.cu
+	$(NVCC) $(NVCC_OPTIONS) $^ -o $@ -lm
 
 clean:
 	/bin/rm -f *.o *.~ $(TARGET)

@@ -291,3 +291,15 @@ __global__ void gaussianKernelGPUConstant(BGR *pixel, int width, int height, int
 }
 
 
+__global__ void gaussianKernelShared(BGR *pixel, int width, int height, int step, BGR *filtered)
+{
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+    int i  = blockIdx.x * blockDim.x + threadIdx.x;
+    int j  = blockIdx.y * blockDim.y + threadIdx.y;
+
+    __shared__ unsigned char localbuf[32 + 4][32 + 4];
+    __syncthreads();
+}
+
+
