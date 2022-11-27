@@ -117,7 +117,7 @@ int main(int argc, char **argv)
     // const int threads = 5;
     // const int N = blocks * threads;
 
-    int NUMOFTEST = 2;
+    int NUMOFTEST = 100;
     float elapsed_time = 0.0f;
     cudaEvent_t start, end;
 
@@ -141,6 +141,7 @@ int main(int argc, char **argv)
         ELITESIZE = std::atoi(argv[4]);
     }
 
+#ifdef _DEBUG
     if (WHICH == 't')
     {
         printf("thrust\n");
@@ -154,8 +155,9 @@ int main(int argc, char **argv)
         printf("Wrong parameter\n");
         exit(1);
     }
+#endif // _DEBUG
 
-    std::cout << POPSIZE << "," << CHROMOSOME << std::endl;
+    std::cout << "#" << POPSIZE << "," << CHROMOSOME << std::endl;
 
     cudaEventCreate(&start);
     cudaEventCreate(&end);
@@ -175,7 +177,7 @@ int main(int argc, char **argv)
 
     if (WHICH == 't')
     {
-        printf("### PRE THRUST###\n");
+        // printf("### PRE THRUST###\n");
         for (int i = 0; i < NUMOFTEST; ++i)
         {
             // イニシャライズ
@@ -194,14 +196,14 @@ int main(int argc, char **argv)
             cudaEventRecord(end, 0);
             cudaEventSynchronize(end);
             cudaEventElapsedTime(&elapsed_time, start, end);
-            printf("Elapsed Time(thrust sort),%d,%f\n", i, elapsed_time);
+            printf("%d,%f\n", i, elapsed_time);
 
             // コピー GPU --> CPU
             result_fit = dev_fit;
             result_id  = dev_id;
             // show_host(result_id, result_fit);
         }
-        printf("### POST THRUST###\n");
+        // printf("### POST THRUST###\n");
     }
     else if (WHICH == 'p')
     {
@@ -213,7 +215,7 @@ int main(int argc, char **argv)
         threads.y = 1;
         threads.z = 1;
 
-        printf("### PRE PSEUDO ELITISM###\n");
+        // printf("### PRE PSEUDO ELITISM###\n");
         for (int i = 0; i < NUMOFTEST; ++i)
         {
             make_initial_fitness(thrust::raw_pointer_cast(&host_fit[0]), POPSIZE, CHROMOSOME);
@@ -228,14 +230,14 @@ int main(int argc, char **argv)
             cudaEventRecord(end, 0);
             cudaEventSynchronize(end);
             cudaEventElapsedTime(&elapsed_time, start, end);
-            printf("Elapsed Time(pseudo_elisism),%d,%f\n", i, elapsed_time);
+            printf("%d,%f\n", i, elapsed_time);
 
             // コピー GPU --> CPU
             result_fit = dev_fit;
             result_id  = dev_id;
             // show_host(result_id, result_fit);
         }
-        printf("### POST PSEUDO###\n");
+        // printf("### POST PSEUDO###\n");
     }
         // show_host(host_id, host_fit);
 
