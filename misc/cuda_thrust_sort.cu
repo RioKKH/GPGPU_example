@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdio>
 #include <numeric>
+#include <thread>
 
 // cuda
 #include <cuda_runtime.h>
@@ -81,7 +82,8 @@ __global__ void pseudo_elisism(const int* dev, int* eliteIdx)
 __host__ void thrust_sort(thrust::host_vector<int> dev_fit,
                           thrust::host_vector<int> dev_id)
 {
-        thrust::sort_by_key(dev_fit.begin(), dev_fit.end(), dev_id.begin());
+    // std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    thrust::sort_by_key(dev_fit.begin(), dev_fit.end(), dev_id.begin());
 }
 
 
