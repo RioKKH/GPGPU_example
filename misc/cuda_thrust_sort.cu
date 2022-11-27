@@ -122,6 +122,7 @@ int main(int argc, char **argv)
     cudaEvent_t start, end;
 
     // parameters for genetic operator
+    char WHICH = 't';
     int POPSIZE    = 100;
     int CHROMOSOME = 128;
     int ELITESIZE  = 8;
@@ -131,12 +132,27 @@ int main(int argc, char **argv)
     dim3 threads;
 
     // argument parser
-    if (argc == 4)
+    if (argc == 5)
     {
         // std::cout << argv[1] << "," << argv[2] << std::endl;
-        POPSIZE = std::atoi(argv[1]);
-        CHROMOSOME = std::atoi(argv[2]);
-        ELITESIZE = std::atoi(argv[3]);
+        WHICH = *argv[1];
+        POPSIZE = std::atoi(argv[2]);
+        CHROMOSOME = std::atoi(argv[3]);
+        ELITESIZE = std::atoi(argv[4]);
+    }
+
+    if (WHICH == 't')
+    {
+        printf("thrust\n");
+    }
+    else if (WHICH == 'p')
+    {
+        printf("pseudo\n");
+    }
+    else
+    {
+        printf("Wrong parameter\n");
+        exit(1);
     }
 
     std::cout << POPSIZE << "," << CHROMOSOME << std::endl;
@@ -157,65 +173,70 @@ int main(int argc, char **argv)
 
     thrust::device_vector<int> dev_eliteId(ELITESIZE);
 
-    printf("### PRE THRUST###\n");
-    for (int i = 0; i < NUMOFTEST; ++i)
+    if (WHICH == 't')
     {
-        // イニシャライズ
-        make_initial_fitness(thrust::raw_pointer_cast(&host_fit[0]), POPSIZE, CHROMOSOME);
-        thrust::sequence(host_id.begin(), host_id.end());
-        // show_host(host_id, host_fit);
+        printf("### PRE THRUST###\n");
+        for (int i = 0; i < NUMOFTEST; ++i)
+        {
+            // イニシャライズ
+            make_initial_fitness(thrust::raw_pointer_cast(&host_fit[0]), POPSIZE, CHROMOSOME);
+            thrust::sequence(host_id.begin(), host_id.end());
+            // show_host(host_id, host_fit);
 
-        // コピー CPU --> GPU
-        dev_fit = host_fit;
-        dev_id  = host_id;
+            // コピー CPU --> GPU
+            dev_fit = host_fit;
+            dev_id  = host_id;
 
-        // sort
-        cudaEventRecord(start, 0);
-        thrust::sort_by_key(dev_fit.begin(), dev_fit.end(), dev_id.begin());
-        // thrust_sort(dev_fit, dev_id);
-        cudaEventRecord(end, 0);
-        cudaEventSynchronize(end);
-        cudaEventElapsedTime(&elapsed_time, start, end);
-        printf("Elapsed Time(thrust sort),%d,%f\n", i, elapsed_time);
+            // sort
+            cudaEventRecord(start, 0);
+            thrust::sort_by_key(dev_fit.begin(), dev_fit.end(), dev_id.begin());
+            // thrust_sort(dev_fit, dev_id);
+            cudaEventRecord(end, 0);
+            cudaEventSynchronize(end);
+            cudaEventElapsedTime(&elapsed_time, start, end);
+            printf("Elapsed Time(thrust sort),%d,%f\n", i, elapsed_time);
 
-        // コピー GPU --> CPU
-        result_fit = dev_fit;
-        result_id  = dev_id;
-        // show_host(result_id, result_fit);
+            // コピー GPU --> CPU
+            result_fit = dev_fit;
+            result_id  = dev_id;
+            // show_host(result_id, result_fit);
+        }
+        printf("### POST THRUST###\n");
     }
-    printf("### POST THRUST###\n");
-
-    blocks.x = ELITESIZE;
-    blocks.y = 1;
-    blocks.z = 1;
-
-    threads.x = POPSIZE / ELITESIZE;
-    threads.y = 1;
-    threads.z = 1;
-
-    printf("### PRE PSEUDO ELITISM###\n");
-    for (int i = 0; i < NUMOFTEST; ++i)
+    else if (WHICH == 'p')
     {
-        make_initial_fitness(thrust::raw_pointer_cast(&host_fit[0]), POPSIZE, CHROMOSOME);
-        // コピー CPU --> GPU
-        dev_fit = host_fit;
-        // dev_id  = host_id; pseudo_elisismではhost_idは使わない
+        blocks.x = ELITESIZE;
+        blocks.y = 1;
+        blocks.z = 1;
 
-        cudaEventRecord(start, 0);
-        pseudo_elisism<<<blocks, threads, threads.x * 2 * sizeof(int)>>>
-            (thrust::raw_pointer_cast(&dev_fit[0]), 
-            thrust::raw_pointer_cast(&dev_eliteId[0]));
-        cudaEventRecord(end, 0);
-        cudaEventSynchronize(end);
-        cudaEventElapsedTime(&elapsed_time, start, end);
-        printf("Elapsed Time(pseudo_elisism),%d,%f\n", i, elapsed_time);
+        threads.x = POPSIZE / ELITESIZE;
+        threads.y = 1;
+        threads.z = 1;
 
-        // コピー GPU --> CPU
-        result_fit = dev_fit;
-        result_id  = dev_id;
-        // show_host(result_id, result_fit);
+        printf("### PRE PSEUDO ELITISM###\n");
+        for (int i = 0; i < NUMOFTEST; ++i)
+        {
+            make_initial_fitness(thrust::raw_pointer_cast(&host_fit[0]), POPSIZE, CHROMOSOME);
+            // コピー CPU --> GPU
+            dev_fit = host_fit;
+            // dev_id  = host_id; pseudo_elisismではhost_idは使わない
+
+            cudaEventRecord(start, 0);
+            pseudo_elisism<<<blocks, threads, threads.x * 2 * sizeof(int)>>>
+                (thrust::raw_pointer_cast(&dev_fit[0]), 
+                thrust::raw_pointer_cast(&dev_eliteId[0]));
+            cudaEventRecord(end, 0);
+            cudaEventSynchronize(end);
+            cudaEventElapsedTime(&elapsed_time, start, end);
+            printf("Elapsed Time(pseudo_elisism),%d,%f\n", i, elapsed_time);
+
+            // コピー GPU --> CPU
+            result_fit = dev_fit;
+            result_id  = dev_id;
+            // show_host(result_id, result_fit);
+        }
+        printf("### POST PSEUDO###\n");
     }
-    printf("### POST THRUST###\n");
         // show_host(host_id, host_fit);
 
     // thrust::counting_iterator<int> ci(1);
@@ -232,7 +253,6 @@ int main(int argc, char **argv)
     // thrust::device_vector<int> d_x(ci, ci + N);
     // thrust::device_vector<int> d_o(1);
 
-    /*
     int *pdev = thrust::raw_pointer_cast(&dev[0]);
 
     reduction1_kernel<int, N> <<<blocks, threads>>> (
