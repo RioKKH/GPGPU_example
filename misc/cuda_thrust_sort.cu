@@ -117,7 +117,7 @@ int main(int argc, char **argv)
     // const int threads = 5;
     // const int N = blocks * threads;
 
-    int NUMOFTEST = 100;
+    int NUMOFTEST = 2;
     float elapsed_time = 0.0f;
     cudaEvent_t start, end;
 
@@ -171,8 +171,8 @@ int main(int argc, char **argv)
 
         // sort
         cudaEventRecord(start, 0);
-        // thrust::sort_by_key(dev_fit.begin(), dev_fit.end(), dev_id.begin());
-        thrust_sort(dev_fit, dev_id);
+        thrust::sort_by_key(dev_fit.begin(), dev_fit.end(), dev_id.begin());
+        // thrust_sort(dev_fit, dev_id);
         cudaEventRecord(end, 0);
         cudaEventSynchronize(end);
         cudaEventElapsedTime(&elapsed_time, start, end);
@@ -181,7 +181,7 @@ int main(int argc, char **argv)
         // コピー GPU --> CPU
         result_fit = dev_fit;
         result_id  = dev_id;
-        // show_host(host_id, host_fit);
+        // show_host(result_id, result_fit);
     }
     printf("### POST THRUST###\n");
 
@@ -208,11 +208,12 @@ int main(int argc, char **argv)
         cudaEventRecord(end, 0);
         cudaEventSynchronize(end);
         cudaEventElapsedTime(&elapsed_time, start, end);
-        printf("Elapsed Time(pseudo_elisism) %f\n", elapsed_time);
+        printf("Elapsed Time(pseudo_elisism),%d,%f\n", i, elapsed_time);
 
         // コピー GPU --> CPU
         result_fit = dev_fit;
         result_id  = dev_id;
+        // show_host(result_id, result_fit);
     }
     printf("### POST THRUST###\n");
         // show_host(host_id, host_fit);

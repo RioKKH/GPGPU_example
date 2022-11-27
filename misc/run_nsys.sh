@@ -5,7 +5,7 @@ nsys profile \
 		 --stats=true \
 		 -f true \
 		 -o ${1} \
-		 true ./cuda_thrust_sort 256 256 8
+		 true ./cuda_thrust_sort 1024 1024 8
 		 #true ./gpuonemax
 
 # -t : APIs to be tracked
