@@ -3,7 +3,10 @@ CPP = g++
 NVCC = nvcc
 GCC_OPTIONS = -Wall --pedantic-error
 GPP_OPTIONS = -std=c++17 -Wall --pedantic-error
-NVCC_OPTIONS = --generate-code arch=compute_75,code=sm_75
+NVCC_OPTIONS = --generate-code arch=compute_75,code=sm_75\
+               --generate-code arch=compute_80,code=sm_80\
+               --generate-code arch=compute_86,code=sm_86
+
 #NVCC_OPTIONS = -arch=sm_52
 #NVCC_OPTIONS = -arch=sm_50 --compiler-bindir "/usr/bin/gcc-9"
 #NVCC_OPTIONS = -arch=sm_86

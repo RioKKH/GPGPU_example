@@ -78,6 +78,12 @@ __global__ void pseudo_elisism(const int* dev, int* eliteIdx)
     }
 }
 
+__host__ void thrust_sort(thrust::host_vector<int> dev_fit,
+                          thrust::host_vector<int> dev_id)
+{
+        thrust::sort_by_key(dev_fit.begin(), dev_fit.end(), dev_id.begin());
+}
+
 
 
 // show fit and id data on CPU
@@ -163,7 +169,8 @@ int main(int argc, char **argv)
 
         // sort
         cudaEventRecord(start, 0);
-        thrust::sort_by_key(dev_fit.begin(), dev_fit.end(), dev_id.begin());
+        // thrust::sort_by_key(dev_fit.begin(), dev_fit.end(), dev_id.begin());
+        thrust_sort(dev_fit, dev_id);
         cudaEventRecord(end, 0);
         cudaEventSynchronize(end);
         cudaEventElapsedTime(&elapsed_time, start, end);
