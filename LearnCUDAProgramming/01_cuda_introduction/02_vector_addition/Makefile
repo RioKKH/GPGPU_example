@@ -1,12 +1,13 @@
-CUDA_PATH=/app/CUDA/11.6u2
+CUDA_PATH=/app/CUDA/11.8
+#CUDA_PATH=/app/CUDA/11.6u2
 CUDA_SAMPLE_PATH=/app/CUDA/10.2/cuda-samples
 #CUDA_PATH=/usr/local/cuda
 HOST_COMPILER ?= g++
 NVCC=${CUDA_PATH}/bin/nvcc -ccbin ${HOST_COMPILER}
 TARGET = vector_addition\
 	 vector_addition_blocks\
-	 #vector_addition_threads\
-	 #vector_addition_threads_blocks
+	 vector_addition_threads\
+	 vector_addition_threads_blocks
 
 INCLUDES= -I${CUDA_SAMPLE_PATH}/common/inc
 NVCC_FLAGS=-m64 -lineinfo
@@ -27,6 +28,12 @@ vector_addition: vector_addition.cu
 	${NVCC} ${INCLUDES} ${ALL_CCFLAGS} ${GENCODE_FLAGS} -o $@ $<
 
 vector_addition_blocks: vector_addition_blocks.cu
+	${NVCC} ${INCLUDES} ${ALL_CCFLAGS} ${GENCODE_FLAGS} -o $@ $<
+
+vector_addition_threads: vector_addition_threads.cu
+	${NVCC} ${INCLUDES} ${ALL_CCFLAGS} ${GENCODE_FLAGS} -o $@ $<
+
+vector_addition_threads_blocks: vector_addition_threads_blocks.cu
 	${NVCC} ${INCLUDES} ${ALL_CCFLAGS} ${GENCODE_FLAGS} -o $@ $<
 
 .PHONY: clean

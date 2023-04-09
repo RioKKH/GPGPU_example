@@ -3,6 +3,7 @@
 LIST="32 64 128 256 512 1024"
 
 for l in ${LIST}; do
+	echo "Running: " ${l} ${l}
 	./cuda_thrust_sort t ${l} ${l} 8 > ${l}_${l}_8_thrust.csv
 	./cuda_thrust_sort p ${l} ${l} 8 > ${l}_${l}_8_pseudo.csv
 done

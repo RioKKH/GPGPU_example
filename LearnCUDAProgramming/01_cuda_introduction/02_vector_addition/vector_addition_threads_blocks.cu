@@ -16,7 +16,8 @@ void host_add(int *a, int *b, int *c)
 
 __global__ void device_add(int *a, int *b, int *c)
 {
-	c[threadIdx.x] = a[threadIdx.x] + b[threadIdx.x];
+	int index = threadIdx.x + blockIdx.x * blockDim.x;
+	c[index] = a[index] + b[index];
 }
 
 // __global__ void device_add(int *a, int *b, int *c)
@@ -46,6 +47,8 @@ int main(void)
     int *a, *b, *c;
     int *d_a, *d_b, *d_c; // device copies of a, b, c
     int size = N * sizeof(int);
+    int threads_per_block = 0;
+    int no_of_blocks = 0;
 
     // Alloc space for host copies of a, b, c and setup input values
     a = (int *)malloc(size); fill_array(a);
@@ -61,7 +64,9 @@ int main(void)
     cudaMemcpy(d_a, a, size, cudaMemcpyHostToDevice);
     cudaMemcpy(d_b, b, size, cudaMemcpyHostToDevice);
 
-    device_add<<<1, N>>>(d_a, d_b, d_c);
+    threads_per_block = 4;
+    no_of_blocks = N / threads_per_block;
+    device_add<<<no_of_blocks, threads_per_block>>>(d_a, d_b, d_c);
     cudaDeviceSynchronize();
 
     // Copy result back to host
