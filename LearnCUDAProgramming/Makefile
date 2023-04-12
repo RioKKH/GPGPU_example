@@ -23,7 +23,7 @@ CFLAGS=
 debug=
 #debug= -g -D_DEBUG
 
-APPS = hello_world hello_world2
+APPS = hello_world hello_world2 vector_addition
 
 TARGET = ${APPS}
 LDFLAGS =
@@ -37,6 +37,8 @@ hello_world: p17_helloworld.cu
 hello_world2: p17_helloworld2.cu
 	${NVCC} ${NVCC_OPTIONS} ${debug} ${CPPINCLUDE} ${CPPFLAGS} -o $@ $^
  
+vector_addition: 01_vector_addtion.cu
+	${NVCC} ${NVCC_OPTIONS} ${debug} ${CPPINCLUDE} ${CPPFLAGS} -o $@ $^
 #
 #%.o : $.cu
 #	${NVCC} ${CPPINCLUDE} ${debug} ${CPPINCLUDE} ${NVCC_OPTIONS} -c $<

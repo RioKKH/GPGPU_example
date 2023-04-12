@@ -1,7 +1,11 @@
-CUDA_PATH=/app/CUDA/11.8
+CUDA_PATH=/usr/local/cuda
+#CUDA_PATH=/app/CUDA/11.8
 #CUDA_PATH=/app/CUDA/11.6u2
-CUDA_SAMPLE_PATH=/app/CUDA/10.2/cuda-samples
+
+CUDA_SAMPLE_PATH=/usr/local/cuda/samples
+#CUDA_SAMPLE_PATH=/app/CUDA/10.2/cuda-samples
 #CUDA_PATH=/usr/local/cuda
+
 HOST_COMPILER ?= g++
 NVCC=${CUDA_PATH}/bin/nvcc -ccbin ${HOST_COMPILER}
 TARGET = sgemm 

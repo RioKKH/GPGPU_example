@@ -2,6 +2,6 @@
 
 nsys profile \
 	-t osrt,cuda,nvtx,cublas,cudnn \
-       	-o baseline \
+	-o baseline \
 	-w true \
 	$1 
